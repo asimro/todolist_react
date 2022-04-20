@@ -55,7 +55,7 @@ export const UpdateList = ({ data }) => {
             const action = todoActive(payload);
             dispatch(action);
             console.log('payload-ACT', payload);
-            setEditState(false);
+            // setEditState(false);
 
         } catch (error) {
             console.log('error', error)
@@ -95,7 +95,7 @@ export const UpdateList = ({ data }) => {
 
             <button type="button" class="btn btn-info"
                 onClick={() => { setActive(!active); handleAct() }}>
-                {active ? "Active" : "InActive"}
+                {data.status ? "Active" : "InActive"}
 
             </button>
         </div>
