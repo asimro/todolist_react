@@ -1,3 +1,5 @@
+import { createSlice } from "@reduxjs/toolkit"
+
 
 const initialState = {
     todoList: [
@@ -9,52 +11,35 @@ const initialState = {
     ]
 }
 
-export const todoReducer = (state = initialState, action) => {
-    switch (action.type) {
+const todoSlicer = createSlice({
+    name: "todo",
+    initialState,
+    reducers: {
+        ADD: (state, action) => {
+            // state.todoList.push(action.payload)
+            state.todoList = [...state.todoList, action?.payload]
 
-        case "ADD": {
-            return {
-                ...state,
-                todoList: [...state.todoList, action?.payload]
-            }
-        }
+        },
 
-        case "EDIT": {
-            return {
-                ...state,
-                todoList: state.todoList.map((val) => {
+        EDIT: (state, action) => {
+            state.todoList = [...state.todoList
+                .map((val) => {
                     if (val.id === action.payload.id) {
                         return {
                             ...val,
-                            title: action.payload.title
+                            title: action.payload.title,
                         }
                     }
                     else {
                         return val;
                     }
-                })
-            }
-        }
+                }
+                )]
+        },
 
-        case "DEL": {
-            return {
-                ...state,
-                todoList: state.todoList.filter((item) => item.id !== action.payload.id)
-            }
-        }
-
-        case "DELALL": {
-            return {
-                ...state,
-                todoList: []
-            }
-
-        }
-
-        case "ACT": {
-            return {
-                ...state,
-                todoList: state.todoList.map((val) => {
+        ACTIVE: (state, action) => {
+            state.todoList = [...state.todoList
+                .map((val) => {
                     if (val.id === action.payload.id) {
                         return {
                             ...val,
@@ -62,15 +47,27 @@ export const todoReducer = (state = initialState, action) => {
                         }
                     }
                     else {
-                        return val;
+                        return val
                     }
-                })
-            }
+                })]
+        },
+
+        DEL: (state, action) => {
+            const newState = [...state.todoList
+                .filter((val) => val.id !== action.payload)]
+
+            state.todoList = newState
+        },
+
+        DELALL: (state) => {
+            state.todoList = []
         }
 
+    },
+})
 
-        default: {
-            return state
-        }
-    }
-}
+export const { ADD, EDIT, ACTIVE, DEL, DELALL } = todoSlicer.actions;
+
+export const todoReducer = todoSlicer.reducer;
+
+export default todoSlicer;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { todoAdd, todoDelAll } from '../todoRedux/todoAction.js'
+import { ADD, DELALL } from '../todoRedux/todoReducer.js'
 import { UpdateList } from './updateList.js'
 import 'bootstrap/dist/css/bootstrap.css'
 
@@ -10,9 +10,8 @@ export const Input = () => {
 
     const dispatch = useDispatch()
 
-    const list = useSelector((val) => {
-        return val.todoReducer.todoList
-    })
+    const list = useSelector((state) => state.todos.todoList)
+    console.log('list', list)
 
     const handleAdd = (data) => {
         try {
@@ -23,10 +22,10 @@ export const Input = () => {
                 status: true
             }
 
-            const action = todoAdd(payload);
+            const action = ADD(payload);
             dispatch(action);
             console.log("payload", payload);
-            // setinputData("");
+            setinputData("");
 
         } catch (error) {
             console.log('error', error)
@@ -35,31 +34,42 @@ export const Input = () => {
 
     return (
         <div >
-            <div class="d-inline-flex p-3 bg-secondary text-white">
-                <input
-                    value={inputData} onChange={(e) => setinputData(e.target.value)} />
+            <div class="input-group mb-3">
+                <input type="text" class="form-control"
+                    placeholder="Write your task"
+                    aria-label="Recipient's username"
+                    aria-describedby="button-addon2"
 
-                <button type="button" class="btn btn-primary"
+                    value={inputData}
+                    onChange={(e) => setinputData(e.target.value)} />
+
+                <button class="btn btn-primary" type="button" id="button-addon2"
                     onClick={() => handleAdd(inputData)}>
                     Add-Data
                 </button>
             </div>
-            <div>
-                <button type="button" class="btn btn-danger"
-                    onClick={() => dispatch(todoDelAll())}>
-                    Delete All Data
-                </button>
 
-                <button type="button" class="btn btn-primary"
-                    onClick={() => setFilter(!filter)}>
-                    {filter ? "SHOW ALL" : "ONLY ACTIVE"}
-                </button>
+            <div class="d-grid gap-2 mx-auto" >
+                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+
+                    <button type="button" class="btn btn-danger"
+                        onClick={() => dispatch(DELALL())}>
+                        Delete All Data
+                    </button>
+
+                    <button type="button" class="btn btn-primary"
+                        onClick={() => setFilter(!filter)}>
+                        {filter ? "SHOW ALL" : "ONLY ACTIVE"}
+                    </button>
+                </div>
             </div>
 
             <div>
                 {
                     list
-                        .filter((item) => filter ? (item.status === filter) : item)
+                        .filter((item) => filter
+                            ? (item.status === filter)
+                            : item)
                         .map((item) => {
                             return (
                                 <UpdateList data={item} />
